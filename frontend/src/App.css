@@ -1,0 +1,130 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #79b877;
+  flex-direction: column;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: black;
+}
+.row {
+  display: flex;
+  height: 100%;
+}
+
+.column {
+  flex: 50%;
+  position: relative;
+  height: 100%;
+}
+.flower-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.flower {
+  max-width: 100%;
+}
+
+.white-square {
+  background-color: #ffffff;
+  align-content: center;
+  width: 80vw;
+  height: 80vh;
+  border-radius: 15px;
+}
+.App-link {
+  color: #2b8505;
+}
+a {
+  color: #2b8505;
+}
+.titleLog {
+  font-size: 30px;
+}
+.subtitle {
+  font-size: 18px;
+}
+/* Full-width inputs */
+.login-form input[type='text'],
+.login-form input[type='password'] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  border-radius: 20px;
+  background-color: #f2f4f8;
+  color: #1c2126;
+  font-weight: bold;
+  margin-right: 5px;
+}
+row {
+  display: flex;
+  flex-flow: row wrap;
+}
+.input-row {
+  width: 50%;
+}
+
+.login-button {
+  background-color: #2b8505;
+  border-radius: 20px;
+}
+
+.form-container {
+  padding-right: 40px;
+  padding-left: 60px;
+  text-align: left;
+  padding-top: 10vh;
+  height: 100%;
+}
+.jakiesKurwaGowno {
+  /*display: flex;*/
+  justify-content: center;
+  align-items: center;
+  /*height: 100%;*/
+  /*position: absolute;*/
+}
+/* Add a hover effect for buttons */
+button:hover {
+  opacity: 0.8;
+}
+
+/* Extra style for the cancel button (red) */
+.cancelbtn {
+  width: auto;
+  padding: 10px 18px;
+  background-color: #f44336;
+}
+
+/* Center the avatar image inside this container */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+}
+
+/* Avatar image */
+img.avatar {
+  width: 40%;
+  border-radius: 50%;
+}
+
+/* Add padding to containers */
+.container {
+  padding: 16px;
+}
+
+/* The "Forgot password" text */
+span.psw {
+  float: right;
+  padding-top: 16px;
+}

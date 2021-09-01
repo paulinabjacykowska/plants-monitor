@@ -1,0 +1,97 @@
+version: '3'
+
+services:
+  managment-api:
+    build:
+      dockerfile: Dockerfile
+      context: './management-api/'
+    restart: on-failure
+    ports:
+      - '5000:5000'
+    volumes:
+      - './management-api/src:/management-api/src'
+    depends_on:
+      - database
+    environment:
+      - DB_URI=mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}
+      - IP_ADDRESS=${IP_ADDRESS}
+    networks:
+      - database-network
+
+  rabbitmq-reader:
+    build:
+      dockerfile: Dockerfile
+      context: './rabbitmq-reader/'
+    restart: on-failure
+    ports:
+      - '4000:4000'
+    volumes:
+      - './rabbitmq-reader/src:/rabbitmq-reader/src'
+    depends_on:
+      - database
+    environment:
+      - DB_URI=mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}
+      - IP_ADDRESS=${IP_ADDRESS}
+    networks:
+      - database-network
+
+  frontend:
+    build:
+      dockerfile: Dockerfile
+      context: './frontend/'
+    restart: on-failure
+    ports:
+      - '3000:3000'
+    volumes:
+      - './frontend:/frontend'
+    environment:
+      - REACT_APP_IP_ADDRESS=${IP_ADDRESS}
+    networks:
+      - database-network
+
+  sensor:
+    build:
+      dockerfile: Dockerfile
+      context: './sensor/'
+    restart: on-failure
+    ports:
+      - '2000:2000'
+    environment:
+      - DEVICE_NUMBER=11223344
+      - IP_ADDRESS=${IP_ADDRESS}
+    volumes:
+      - './sensor/src:/sensor/src'
+    depends_on:
+      - rabbitmq
+    networks:
+      - database-network
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - './rabbitmq/data/:/var/lib/rabbitmq/'
+      - './rabbitmq/log/:/var/log/rabbitmq'
+    networks:
+      - database-network
+
+  database:
+    image: mongo
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+    environment:
+      - MONGO_INITDB_DATABASE=${DB_DATABASE}
+      - MONGO_INITDB_ROOT_USERNAME=${DB_ROOT}
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MONGO_USER_USERNAME=${DB_USER}
+      - MONGO_USER_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ./database/init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+      - ./database/data:/data/db
+    networks:
+      - database-network
+
+networks:
+  database-network:

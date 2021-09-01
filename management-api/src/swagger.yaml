@@ -1,0 +1,699 @@
+openapi: 3.0.0
+info:
+  title: RSI Plants API
+  description: API description for student project.
+  version: 1.0.0
+
+host: api.example.com
+basePath: /v1
+schemes:
+  - http
+
+paths:
+  /register:
+    post:
+      summary: Creates new user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  requred: true
+                password:
+                  type: string
+                  requred: true
+                email:
+                  type: string
+                  requred: true
+      produces:
+        - application/json
+      responses:
+        200:
+          description: New user created and returned with auth token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+        422:
+          description: Invalid data passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /login:
+    post:
+      summary: Generates auth token for auth user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  requred: true
+                password:
+                  type: string
+                  requred: true
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Generates auth token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+        404:
+          description: An existing user at given data not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Invalid data passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /validate:
+    get:
+      summary: Checks if auth token is valid.
+      security:
+        - BearerAuth: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Authorized info.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        401:
+          description: Not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /sensors:
+    get:
+      summary: Returns a list of user sensors.
+      security:
+        - BearerAuth: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: A JSON array of sensors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sensor'
+        401:
+          description: Not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: Creates new sensor.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  requred: true
+                deviceNumber:
+                  type: string
+                  requred: true
+                plantId:
+                  type: string
+                  requred: true
+      produces:
+        - application/json
+      responses:
+        200:
+          description: A new sensor created and returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+        404:
+          description: An existing content at given ID not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Invalid data passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /sensors/{sensorId}:
+    put:
+      summary: Updates an existing sensor data at given ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: sensorId
+          in: path
+          required: true
+          description: A sensor ID.
+          schema:
+            type: string
+            length: 12
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  requred: false
+                deviceNumber:
+                  type: string
+                  requred: false
+                plantId:
+                  type: string
+                  requred: false
+      produces:
+        - applicaiton/json
+      responses:
+        200:
+          description: A sensor had been updated and returned/
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+        404:
+          description: A sensor at given ID not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Invalid data passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Deletes a sensor at given ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: sensorId
+          in: path
+          required: true
+          description: A sensor ID.
+          schema:
+            type: string
+            length: 12
+      produces:
+        - applicaiton/json
+      responses:
+        200:
+          description: A boolean state if a sensor had been removed.
+          content:
+            application/json:
+              schema:
+                type: boolean
+        404:
+          description: A sensor at given ID not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /plants:
+    get:
+      summary: Returns a list of user plants.
+      security:
+        - BearerAuth: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: A JSON array of plants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plant'
+        401:
+          description: Not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: Creates new plant.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  required: true
+                minAirHumidity:
+                  type: integer
+                  required: true
+                maxAirHumidity:
+                  type: integer
+                  required: true
+                minSoilMoisture:
+                  type: integer
+                  required: true
+                maxSoilMoisture:
+                  type: integer
+                  required: true
+                minAirTemp:
+                  type: integer
+                  required: true
+                maxAirTemp:
+                  type: integer
+                  required: true
+                minLightLuminosity:
+                  type: integer
+                  required: true
+                maxLightLuminosity:
+                  type: integer
+                  required: true
+                minChlorophyllContent:
+                  type: integer
+                  required: true
+                maxChlorophyllContent:
+                  type: integer
+                  required: true
+      produces:
+        - application/json
+      responses:
+        200:
+          description: New plant created and returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plant'
+        404:
+          description: An existing content at given ID not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Invalid data passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /plants/{plantId}:
+    get:
+      summary: Returns a plant at given ID
+      security:
+        - BearerAuth: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: A JSON data of a plant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plant'
+        404:
+          description: A plant at given ID not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Updates an existing plant data at given ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: plantId
+          in: path
+          required: true
+          description: A plant ID.
+          schema:
+            type: string
+            length: 12
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  required: false
+                minAirHumidity:
+                  type: integer
+                  required: false
+                maxAirHumidity:
+                  type: integer
+                  required: false
+                minSoilMoisture:
+                  type: integer
+                  required: false
+                maxSoilMoisture:
+                  type: integer
+                  required: false
+                minAirTemp:
+                  type: integer
+                  required: false
+                maxAirTemp:
+                  type: integer
+                  required: false
+                minLightLuminosity:
+                  type: integer
+                  required: false
+                maxLightLuminosity:
+                  type: integer
+                  required: false
+                minChlorophyllContent:
+                  type: integer
+                  required: false
+                maxChlorophyllContent:
+                  type: integer
+                  required: false
+      produces:
+        - applicaiton/json
+      responses:
+        200:
+          description: A plant had been updated and returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plant'
+        404:
+          description: A plant at given ID not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        422:
+          description: Invalid data passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Deletes a plant at given ID.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: plantId
+          in: path
+          required: true
+          description: A plant ID.
+          schema:
+            type: string
+            length: 12
+      produces:
+        - applicaiton/json
+      responses:
+        200:
+          description: A boolean state if a plant had been removed.
+          content:
+            application/json:
+              schema:
+                type: boolean
+        404:
+          description: A plant at given ID not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /readings/{sensorId}:
+    get:
+      summary: Returns last readings of sensor at given ID
+      security:
+        - BearerAuth: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: A JSON data of a readings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reading'
+        401:
+          description: Not authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+
+    Sensor:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        deviceNumber:
+          type: string
+        plant:
+          $ref: '#/components/schemas/Plant'
+        user:
+          $ref: '#/components/schemas/User'
+
+    Plant:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        minAirHumidity:
+          type: integer
+        maxAirHumidity:
+          type: integer
+        minSoilMoisture:
+          type: integer
+        maxSoilMoisture:
+          type: integer
+        minAirTemp:
+          type: integer
+        maxAirTemp:
+          type: integer
+        minLightLuminosity:
+          type: integer
+        maxLightLuminosity:
+          type: integer
+        minChlorophyllContent:
+          type: integer
+        maxChlorophyllContent:
+          type: integer
+
+    Reading:
+      type: object
+      properties:
+        _id:
+          type: string
+        deviceNumber:
+          type: string
+        sensor:
+          $ref: '#/components/schemas/Sensor'
+        airHumidity:
+          type: integer
+        soilMoisture:
+          type: integer
+        airTemperature:
+          type: integer
+        lightLuminosity:
+          type: integer
+        chlorophyllContent:
+          type: integer

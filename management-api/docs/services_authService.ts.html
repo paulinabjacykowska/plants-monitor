@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> services/authService.ts</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+             
+                <a href="index.html">
+                    <h1 class="navbar-item">RSI-Plants</h1>
+                </a>
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    API Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Global</h3><ul><li><a href="global.html#addPlant">addPlant</a></li><li><a href="global.html#addSensor">addSensor</a></li><li><a href="global.html#deletePlant">deletePlant</a></li><li><a href="global.html#deleteSensor">deleteSensor</a></li><li><a href="global.html#getPlant">getPlant</a></li><li><a href="global.html#getPlants">getPlants</a></li><li><a href="global.html#getReadings">getReadings</a></li><li><a href="global.html#getSensorByPlant">getSensorByPlant</a></li><li><a href="global.html#getSensors">getSensors</a></li><li><a href="global.html#getUsers">getUsers</a></li><li><a href="global.html#initRoutes">initRoutes</a></li><li><a href="global.html#loginUser">loginUser</a></li><li><a href="global.html#registerUser">registerUser</a></li><li><a href="global.html#updatePlant">updatePlant</a></li><li><a href="global.html#updateSensor">updateSensor</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>services/authService.ts</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import bcrypt from 'bcryptjs';
+import User, { IUser } from '../models/user';
+import {
+  DefErrorMessages,
+  returnError,
+  returnSuccess,
+  SFuncResponse,
+} from '../utils/services';
+import { signJWT } from '../utils/jwt';
+
+export enum UserErrorMessages {
+  NotFound = 'user/USER_NOT_FOUND',
+  UserWithThisEmailAlreadyExists = 'user/USER_WITH_THIS_EMAIL_ALREADY_EXISTS',
+}
+
+/**
+ * Finds all registered users in database
+ * @function
+ * @returns -  Array consists of all users or error
+ */
+export const getUsers = (): Promise&lt;SFuncResponse&lt;IUser[]>> => {
+  return User.find()
+    .then(returnSuccess)
+    .catch((error) => {
+      console.error(error);
+      return returnError(DefErrorMessages.InternalServerError);
+    });
+};
+
+export interface UserData {
+  name: string;
+  password: string;
+  email: string;
+}
+
+/**
+ * Registers new user
+ * @function
+ * @param userData - data that must be provided for registering new user
+ * @returns - if registeration was successfull - new user data and authorization token, else error
+ */
+export const registerUser = async (
+  userData: UserData
+): Promise&lt;SFuncResponse&lt;{ user: IUser; token: string }>> => {
+  try {
+    if (await User.findOne({ email: userData.email })) {
+      return returnError(UserErrorMessages.UserWithThisEmailAlreadyExists);
+    }
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+    const user = await new User({
+      name: userData.name,
+      password: hashedPassword,
+      email: userData.email,
+    }).save();
+
+    let token = signJWT(user);
+    if (token.token) return returnSuccess({ user: user, token: token.token });
+    return returnError(DefErrorMessages.InternalServerError);
+  } catch (error) {
+    console.error(error);
+    return returnError(DefErrorMessages.InternalServerError);
+  }
+};
+
+export interface UserLoginData {
+  email: string;
+  password: string;
+}
+
+/**
+ * Authenticate and login existing user
+ * @function
+ * @param userLoginData - data that must be provided for authenticate and login user into his account
+ * @returns - if login was successfull - user data and authentication token, else error
+ */
+export const loginUser = async (
+  userLoginData: UserLoginData
+): Promise&lt;SFuncResponse&lt;{ user: IUser; token: string }>> => {
+  try {
+    const user = await User.findOne({ email: userLoginData.email });
+    if (!user) return returnError(UserErrorMessages.NotFound);
+    const isPasswordMatching = await bcrypt.compare(
+      userLoginData.password,
+      user.password
+    );
+    if (isPasswordMatching) {
+      let token = signJWT(user);
+      if (token.token) return returnSuccess({ user: user, token: token.token });
+    } else {
+      return returnError(UserErrorMessages.NotFound);
+    }
+    return returnError(DefErrorMessages.InternalServerError);
+  } catch (error) {
+    console.error(error);
+    return returnError(DefErrorMessages.InternalServerError);
+  }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+</body>
+</html>
