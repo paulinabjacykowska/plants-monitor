@@ -1,7 +1,22 @@
-# RSI Plants Monitor System
+<h1 align='center'>
+  <strong>Plants Monitor</strong>
+</h1>
 
-It's a microservice based system which provides IoT sensors garden plants management. A user, who is logged in, can register his plants and connect them to the added sensors in order to monitor their environment for an earlier prevention of any garden problems, such as too high air humidity.
-It uses a docker containers for running services independently and without complicated configuration.
+<p align='center'>
+  <a href='#about'>About</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href='#launch'>Launch</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href='#demo'>Demo</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href='#tech-stack'>Tech Stack</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href='#creators'>Creators</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+</p>
+
+## About
+
+<p>
+  Plants Monitor is a microservice based system which provides IoT sensors garden plants management. 
+  A user, who is logged in, can register his plants and connect them to the added sensors in order to monitor their environment for an earlier prevention of any       garden problems, such as too high air humidity.
+  It uses a docker containers for running services independently and without complicated configuration.<br>
+</p>
 
 ## Launch
 
@@ -13,24 +28,24 @@ After configuration the application can be started with:
 docker-compose up
 ```
 
-## Documentation
+## Demo
 
-Source code documentation for each service is available in /docs folder.
+Click play and watch short walkthrough:
 
-## Authors
+https://user-images.githubusercontent.com/89641881/131653772-c8769283-bc3e-477a-907a-15a83f74c944.mp4
 
-- Paulina Jacykowska
-- Marcin Szuster
+## Tech Stack
 
-## License
+<ul>
+  <li>JavaScript</li>
+  <li>TypeScript</li>
+  <li>React.js</li>
+  <li>mongoose</li>
+  <li>mongoDB</li>
+  <li>RabbitMQ</li>
+  <li>Express.js</li>
+</ul>
 
-Shield: [![CC BY-SA 4.0][cc-by-sa-shield]][cc-by-sa]
+## Creators
 
-This work is licensed under a
-[Creative Commons Attribution-ShareAlike 4.0 International License][cc-by-sa].
-
-[![CC BY-SA 4.0][cc-by-sa-image]][cc-by-sa]
-
-[cc-by-sa]: http://creativecommons.org/licenses/by-sa/4.0/
-[cc-by-sa-image]: https://licensebuttons.net/l/by-sa/4.0/88x31.png
-[cc-by-sa-shield]: https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg
+Created by [Paulina Jacykowska](https://github.com/paulinabjacykowska) and two other students (Marcin Szuster and Agnieszka Ryl) from Wrocław University of Science and Technology.
