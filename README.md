@@ -47,5 +47,4 @@ https://user-images.githubusercontent.com/89641881/131653772-c8769283-bc3e-477a-
 </ul>
 
 ## Creators
-
-Created by [Paulina Jacykowska](https://github.com/paulinabjacykowska) and two other students (Marcin Szuster and Agnieszka Ryl) from Wrocław University of Science and Technology.
+Created by [Paulina Jacykowska](https://github.com/paulinabjacykowska), Marcin Szuster and Agnieszka Ryl, students of Wrocław University of Science and Technology
