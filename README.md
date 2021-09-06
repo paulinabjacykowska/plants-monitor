@@ -13,7 +13,7 @@
 ## About
 
 <p>
-  Plants Monitor is a microservice based system which provides IoT sensors garden plants management. 
+  Plants Monitor is a microservice based system which provides IoT sensors indoor plants management. 
   A user, who is logged in, can register his plants and connect them to the added sensors in order to monitor their environment for an earlier prevention of any       garden problems, such as too high air humidity.
   It uses a docker containers for running services independently and without complicated configuration.<br>
 </p>
